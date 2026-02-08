@@ -20,19 +20,7 @@ def dashboard():
     user_phone = session.get("user_phone")
     if not user_phone:
         return redirect(url_for("auth.login"))
-    db = get_db()
-    medicines = db.execute(
-        "SELECT id, name, price, expiry_date, stock_quantity FROM medicines ORDER BY name"
-    ).fetchall()
-    message = request.args.get("message")
-    error = request.args.get("error")
-    return render_template(
-        "dashboard.html",
-        phone=user_phone,
-        medicines=medicines,
-        message=message,
-        error=error,
-    )
+    return render_template("dashboard.html", phone=user_phone)
 
 
 @auth_bp.route("/auth/request-otp", methods=["POST"])
@@ -127,10 +115,10 @@ def verify_otp():
         (latest["id"],),
     )
 
-    user = db.execute("SELECT * FROM users WHERE phone_number = ?", (phone,)).fetchone()
+    user = db.execute("SELECT * FROM users WHERE phone = ?", (phone,)).fetchone()
     if not user:
         db.execute(
-            "INSERT INTO users (phone_number, created_at) VALUES (?, ?)",
+            "INSERT INTO users (phone, created_at) VALUES (?, ?)",
             (phone, now_iso()),
         )
 
@@ -139,59 +127,6 @@ def verify_otp():
     session["user_phone"] = phone
 
     return redirect(url_for("auth.dashboard"))
-
-
-@auth_bp.route("/orders/place", methods=["POST"])
-def place_order():
-    user_phone = session.get("user_phone")
-    if not user_phone:
-        return redirect(url_for("auth.login"))
-
-    medicine_id = request.form.get("medicine_id", "").strip()
-    quantity = request.form.get("quantity", "").strip()
-    payment_mode = request.form.get("payment_mode", "").strip()
-
-    if not medicine_id or not quantity or not payment_mode:
-        return redirect(url_for("auth.dashboard", error="Please complete all order fields."))
-
-    try:
-        quantity_value = int(quantity)
-    except ValueError:
-        return redirect(url_for("auth.dashboard", error="Quantity must be a whole number."))
-
-    if quantity_value <= 0:
-        return redirect(url_for("auth.dashboard", error="Quantity must be at least 1."))
-
-    if payment_mode not in {"COD", "UPI"}:
-        return redirect(url_for("auth.dashboard", error="Invalid payment mode selected."))
-
-    db = get_db()
-    user = db.execute("SELECT id FROM users WHERE phone_number = ?", (user_phone,)).fetchone()
-    if not user:
-        return redirect(url_for("auth.dashboard", error="User record not found. Please login again."))
-
-    medicine = db.execute(
-        "SELECT id, stock_quantity FROM medicines WHERE id = ?",
-        (medicine_id,),
-    ).fetchone()
-    if not medicine:
-        return redirect(url_for("auth.dashboard", error="Selected medicine not found."))
-
-    if quantity_value > medicine["stock_quantity"]:
-        return redirect(
-            url_for("auth.dashboard", error="Not enough stock available for that quantity.")
-        )
-
-    db.execute(
-        """
-        INSERT INTO orders (user_id, medicine_id, quantity, payment_mode, status, created_at)
-        VALUES (?, ?, ?, ?, ?, ?)
-        """,
-        (user["id"], medicine["id"], quantity_value, payment_mode, "Placed", now_iso()),
-    )
-    db.commit()
-
-    return redirect(url_for("auth.dashboard", message="Order placed successfully."))
 
 
 @auth_bp.route("/auth/logout")

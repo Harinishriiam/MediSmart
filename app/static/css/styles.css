@@ -83,14 +83,6 @@ input {
   font-size: 1rem;
 }
 
-select {
-  padding: 0.65rem 0.75rem;
-  border-radius: 12px;
-  border: 1px solid #d5dde5;
-  font-size: 0.95rem;
-  background: #fff;
-}
-
 button,
 .secondary {
   padding: 0.75rem 1.5rem;
@@ -143,41 +135,6 @@ button,
   display: grid;
   gap: 1rem;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-}
-
-.table-wrap {
-  overflow-x: auto;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.95rem;
-}
-
-th,
-td {
-  text-align: left;
-  padding: 0.75rem 0.5rem;
-  border-bottom: 1px solid #e3ebf2;
-}
-
-thead th {
-  color: var(--muted);
-  font-weight: 600;
-}
-
-.order-form {
-  display: grid;
-  gap: 0.5rem;
-}
-
-.order-form input {
-  width: 90px;
-}
-
-.order-form button {
-  width: 100%;
 }
 
 .mini {
