@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MediSmart - OTP Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
+  </head>
+  <body>
+    <main class="container">
+      <header class="hero">
+        <h1>MediSmart</h1>
+        <p class="tagline">Personalized Medicine Shopping Platform</p>
+        <p class="disclaimer">This system does not provide medical diagnosis or prescriptions.</p>
+      </header>
+
+      <section class="card">
+        <h2>SMS OTP Login</h2>
+        <p class="helper">Enter your mobile number to receive a 4-digit OTP (simulated SMS).</p>
+
+        {% if error %}
+        <div class="alert alert-error">{{ error }}</div>
+        {% endif %}
+        {% if info %}
+        <div class="alert alert-success">{{ info }}</div>
+        {% endif %}
+
+        <form action="{{ url_for('auth.request_otp') }}" method="post" class="form">
+          <label for="phone">Mobile Number</label>
+          <input
+            type="tel"
+            id="phone"
+            name="phone"
+            placeholder="e.g. 9876543210"
+            value="{{ phone or '' }}"
+            required
+          />
+          <button type="submit" class="primary">Send OTP</button>
+        </form>
+
+        <form action="{{ url_for('auth.verify_otp') }}" method="post" class="form">
+          <label for="otp">Enter OTP</label>
+          <input type="text" id="otp" name="otp" placeholder="4-digit OTP" maxlength="4" />
+          <input type="hidden" name="phone" value="{{ phone or '' }}" />
+          <button type="submit" class="secondary">Verify &amp; Login</button>
+        </form>
+      </section>
+
+      <section class="card info-block">
+        <h3>Safety Reminder</h3>
+        <ul>
+          <li>No diagnosis or prescriptions are provided.</li>
+          <li>Always consult a licensed doctor for medical advice.</li>
+          <li>OTP is for demo only and shown in the server console.</li>
+        </ul>
+      </section>
+    </main>
+  </body>
+</html>

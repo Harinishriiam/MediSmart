@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MediSmart - Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
+  </head>
+  <body>
+    <main class="container">
+      <header class="hero">
+        <h1>Welcome to MediSmart</h1>
+        <p class="tagline">Personalized care, smarter savings.</p>
+        <p class="disclaimer">This system does not provide medical diagnosis or prescriptions.</p>
+      </header>
+
+      <section class="card">
+        <h2>Logged in as {{ phone }}</h2>
+        <p class="helper">Your personalized dashboard will appear here once the full modules are enabled.</p>
+        <div class="cta-row">
+          <a class="secondary" href="{{ url_for('auth.logout') }}">Logout</a>
+        </div>
+      </section>
+
+      <section class="grid">
+        <div class="card mini">
+          <h3>Medicine Catalog</h3>
+          <p>Search by brand or salt. Discover cheaper alternatives.</p>
+        </div>
+        <div class="card mini">
+          <h3>Smart Coupons</h3>
+          <p>Personalized discounts based on purchase history and loyalty.</p>
+        </div>
+        <div class="card mini">
+          <h3>Reminders</h3>
+          <p>Refill and dosage reminders to support adherence.</p>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
