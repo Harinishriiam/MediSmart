@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MediSmart - Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
+  </head>
+  <body>
+    <main class="container">
+      <header class="hero">
+        <h1>Welcome to MediSmart</h1>
+        <p class="tagline">Personalized care, smarter savings.</p>
+        <p class="disclaimer">This system does not provide medical diagnosis or prescriptions.</p>
+      </header>
+
+      <section class="card">
+        <h2>Logged in as {{ phone }}</h2>
+        <p class="helper">Your personalized dashboard will appear here once the full modules are enabled.</p>
+        {% if error %}
+        <div class="alert alert-error">{{ error }}</div>
+        {% endif %}
+        {% if message %}
+        <div class="alert alert-success">{{ message }}</div>
+        {% endif %}
+        <div class="cta-row">
+          <a class="secondary" href="{{ url_for('auth.logout') }}">Logout</a>
+        </div>
+      </section>
+
+      <section class="card">
+        <h3>Available Medicines</h3>
+        <p class="helper">Select a medicine, choose payment mode, and place a demo order.</p>
+        {% if medicines %}
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Medicine</th>
+                <th>Price (₹)</th>
+                <th>Expiry</th>
+                <th>Stock</th>
+                <th>Order</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for medicine in medicines %}
+              <tr>
+                <td>{{ medicine.name }}</td>
+                <td>{{ "%.2f"|format(medicine.price) }}</td>
+                <td>{{ medicine.expiry_date }}</td>
+                <td>{{ medicine.stock_quantity }}</td>
+                <td>
+                  <form action="{{ url_for('auth.place_order') }}" method="post" class="order-form">
+                    <input type="hidden" name="medicine_id" value="{{ medicine.id }}" />
+                    <input
+                      type="number"
+                      name="quantity"
+                      min="1"
+                      max="{{ medicine.stock_quantity }}"
+                      value="1"
+                      aria-label="Quantity for {{ medicine.name }}"
+                      required
+                    />
+                    <select name="payment_mode" aria-label="Payment mode for {{ medicine.name }}" required>
+                      <option value="">Payment</option>
+                      <option value="COD">COD</option>
+                      <option value="UPI">UPI</option>
+                    </select>
+                    <button type="submit" class="primary">Place Order</button>
+                  </form>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <p class="helper">No medicines available yet. Please check back later.</p>
+        {% endif %}
+      </section>
+
+      <section class="grid">
+        <div class="card mini">
+          <h3>Smart Coupons</h3>
+          <p>Personalized discounts based on purchase history and loyalty.</p>
+        </div>
+        <div class="card mini">
+          <h3>Reminders</h3>
+          <p>Refill and dosage reminders to support adherence.</p>
+        </div>
+        <div class="card mini">
+          <h3>Safety &amp; Support</h3>
+          <p>Always consult a doctor for medical guidance.</p>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
